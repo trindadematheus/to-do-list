@@ -1,16 +1,26 @@
 import React, {useState} from 'react';
 import {Text, View, Modal, TouchableOpacity, TextInput} from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
+import CheckBox from '@react-native-community/checkbox';
 
 export default function ActivityItem() {
   const [showModal, setShowModal] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   return (
     <>
       <TouchableOpacity onPress={() => setShowModal(true)} style={S.container}>
-        <View>
-          <Text style={S.title}>Estudar Programação</Text>
-          <Text style={S.subTitle}>Estudar apps offline</Text>
+        <View style={S.wrapper}>
+          <CheckBox
+            disabled={false}
+            value={checked}
+            tintColors={{true: '#673ab7', false: '#c9a5d8'}}
+            onValueChange={newValue => setChecked(newValue)}
+          />
+          <View>
+            <Text style={S.title}>Estudar Programação</Text>
+            <Text style={S.subTitle}>Estudar apps offline</Text>
+          </View>
         </View>
 
         <Text style={S.arrow}>{'>'}</Text>
@@ -37,6 +47,16 @@ export default function ActivityItem() {
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Descrição</Text>
               <TextInput style={S.textInput} />
+            </View>
+
+            <View style={S.status}>
+              <CheckBox
+                disabled={false}
+                value={checked}
+                tintColors={{true: '#673ab7', false: '#c9a5d8'}}
+                onValueChange={newValue => setChecked(newValue)}
+              />
+              <Text style={S.textInputLabel}>Status</Text>
             </View>
 
             <View style={S.actions}>
@@ -69,6 +89,9 @@ const S = EStyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  wrapper: {
+    flexDirection: 'row',
   },
   title: {
     fontWeight: 'bold',
@@ -127,6 +150,7 @@ const S = EStyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: '1.25rem',
   },
   actionButton: {
     flex: 1,
@@ -137,5 +161,9 @@ const S = EStyleSheet.create({
   },
   actionButtonText: {
     color: 'white',
+  },
+  status: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import {TouchableOpacity, Text, Modal, View, TextInput} from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
+import CheckBox from '@react-native-community/checkbox';
 
 export default function ModalCreateActivity() {
   const [showModal, setShowModal] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   return (
     <>
@@ -35,6 +37,16 @@ export default function ModalCreateActivity() {
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Descrição</Text>
               <TextInput style={S.textInput} />
+            </View>
+
+            <View style={S.status}>
+              <CheckBox
+                disabled={false}
+                value={checked}
+                tintColors={{true: '#673ab7', false: '#c9a5d8'}}
+                onValueChange={newValue => setChecked(newValue)}
+              />
+              <Text style={S.textInputLabel}>Status</Text>
             </View>
 
             <View style={S.actions}>
@@ -100,7 +112,7 @@ const S = EStyleSheet.create({
     marginBottom: '1.25rem',
   },
   textInputLabel: {
-    color: '#9b70be',
+    color: '#593c70',
     fontSize: '0.625rem',
     marginBottom: '0.25rem',
   },
@@ -112,9 +124,14 @@ const S = EStyleSheet.create({
     fontSize: '0.75rem',
     borderRadius: '0.5rem',
   },
+  status: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: '1.25rem',
   },
   actionButton: {
     flex: 1,

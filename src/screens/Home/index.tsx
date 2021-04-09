@@ -62,6 +62,7 @@ const S = EStyleSheet.create({
   },
   copyright: {
     color: '#A49DAB',
+    marginTop: '1.25rem',
     alignSelf: 'center',
   },
 });
