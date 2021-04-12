@@ -1,11 +1,39 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, Text, Modal, View, TextInput} from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import CheckBox from '@react-native-community/checkbox';
+import {useDatabase} from '@nozbe/watermelondb/hooks';
 
-export default function ModalCreateActivity() {
+export default function ModalCreateTask({setTasks}: any) {
   const [showModal, setShowModal] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [checked, setChecked] = useState(false);
+
+  const database = useDatabase();
+
+  useEffect(() => {
+    clearForm();
+  }, [showModal]);
+
+  async function handleAddTask() {
+    await database.action(async () => {
+      const newTask = await database.get('tasks').create((task: any) => {
+        task.title = title;
+        task.description = description;
+        task.status = checked;
+      });
+
+      setTasks((state: any) => [...state, newTask]);
+      setShowModal(false);
+    });
+  }
+
+  function clearForm() {
+    setTitle('');
+    setDescription('');
+    setChecked(false);
+  }
 
   return (
     <>
@@ -32,11 +60,19 @@ export default function ModalCreateActivity() {
 
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Titulo</Text>
-              <TextInput style={S.textInput} />
+              <TextInput
+                value={title}
+                onChangeText={text => setTitle(text)}
+                style={S.textInput}
+              />
             </View>
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Descrição</Text>
-              <TextInput style={S.textInput} />
+              <TextInput
+                value={description}
+                onChangeText={text => setDescription(text)}
+                style={S.textInput}
+              />
             </View>
 
             <View style={S.status}>
@@ -51,10 +87,12 @@ export default function ModalCreateActivity() {
 
             <View style={S.actions}>
               <TouchableOpacity
+                onPress={clearForm}
                 style={{...S.actionButton, backgroundColor: '#DC3545'}}>
                 <Text style={S.actionButtonText}>Limpar</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={handleAddTask}
                 style={{
                   ...S.actionButton,
                   backgroundColor: '#007BFF',
@@ -126,7 +164,7 @@ const S = EStyleSheet.create({
   },
   status: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   actions: {
     flexDirection: 'row',

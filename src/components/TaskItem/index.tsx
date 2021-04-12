@@ -1,11 +1,85 @@
 import React, {useState} from 'react';
-import {Text, View, Modal, TouchableOpacity, TextInput} from 'react-native';
+import {
+  Text,
+  View,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import CheckBox from '@react-native-community/checkbox';
+import {useDatabase} from '@nozbe/watermelondb/hooks';
 
-export default function ActivityItem() {
+export default function TaskItem({task, setTasks}: any) {
   const [showModal, setShowModal] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description);
+  const [checked, setChecked] = useState(task.status);
+
+  const database = useDatabase();
+
+  async function handleChecked(newValue: boolean) {
+    await database.action(async () => {
+      const selectedTask = await database.get('tasks').find(task.id);
+
+      await selectedTask.update((task: any) => {
+        task.status = newValue;
+      });
+
+      setChecked(newValue);
+    });
+  }
+
+  async function handleUpdate() {
+    await database.action(async () => {
+      const selectedTask = await database.get('tasks').find(task.id);
+
+      const updatedTask = await selectedTask.update((task: any) => {
+        task.title = title;
+        task.description = description;
+        task.status = checked;
+      });
+
+      setTasks((state: any) => {
+        const findedTask = state.findIndex((t: any) => t.id === task.id);
+
+        state[findedTask] = updatedTask;
+
+        return [...state];
+      });
+
+      setShowModal(false);
+    });
+  }
+
+  async function handleDelete() {
+    Alert.alert('Apagar tarefa', 'Deseja apagar permanentemente essa tarefa?', [
+      {
+        text: 'Não',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {text: 'Sim', onPress: () => deleteTask()},
+    ]);
+  }
+
+  async function deleteTask() {
+    await database.action(async () => {
+      const selectedTask = await database.get('tasks').find(task.id);
+      await selectedTask.destroyPermanently();
+
+      setShowModal(false);
+
+      setTasks((state: any) => {
+        const findedTask = state.findIndex((t: any) => t.id === task.id);
+
+        state.splice(findedTask, 1);
+
+        return [...state];
+      });
+    });
+  }
 
   return (
     <>
@@ -15,11 +89,11 @@ export default function ActivityItem() {
             disabled={false}
             value={checked}
             tintColors={{true: '#673ab7', false: '#c9a5d8'}}
-            onValueChange={newValue => setChecked(newValue)}
+            onValueChange={handleChecked}
           />
           <View>
-            <Text style={S.title}>Estudar Programação</Text>
-            <Text style={S.subTitle}>Estudar apps offline</Text>
+            <Text style={S.title}>{task.title}</Text>
+            <Text style={S.subTitle}>{task.description}</Text>
           </View>
         </View>
 
@@ -42,11 +116,19 @@ export default function ActivityItem() {
 
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Titulo</Text>
-              <TextInput style={S.textInput} />
+              <TextInput
+                value={title}
+                onChangeText={text => setTitle(text)}
+                style={S.textInput}
+              />
             </View>
             <View style={S.formGroup}>
               <Text style={S.textInputLabel}>Descrição</Text>
-              <TextInput style={S.textInput} />
+              <TextInput
+                value={description}
+                onChangeText={text => setDescription(text)}
+                style={S.textInput}
+              />
             </View>
 
             <View style={S.status}>
@@ -61,10 +143,12 @@ export default function ActivityItem() {
 
             <View style={S.actions}>
               <TouchableOpacity
+                onPress={handleDelete}
                 style={{...S.actionButton, backgroundColor: '#DC3545'}}>
                 <Text style={S.actionButtonText}>Apagar</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                onPress={handleUpdate}
                 style={{
                   ...S.actionButton,
                   backgroundColor: '#007BFF',

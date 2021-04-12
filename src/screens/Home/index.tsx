@@ -1,13 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StatusBar, Image} from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useDatabase} from '@nozbe/watermelondb/hooks';
 
 import logoImage from '../../assets/logo.png';
-import ActivityItem from '../../components/ActivityItem';
-import ModalCreateActivity from '../../components/ModalCreateActivity';
+import TaskItem from '../../components/TaskItem';
+import ModalCreateTask from '../../components/ModalCreateTask';
 
 export default function Home() {
+  const [tasks, setTasks] = useState([]);
+
+  const database = useDatabase();
+
+  useEffect(() => {
+    searchAllTasks();
+  }, []);
+
+  async function searchAllTasks() {
+    const allTasks: any = await database.get('tasks').query().fetch();
+
+    setTasks(allTasks);
+  }
+
   return (
     <View style={S.container}>
       <StatusBar
@@ -18,20 +33,11 @@ export default function Home() {
       />
       <Image style={S.image} source={logoImage} />
       <View style={S.card}>
-        <ModalCreateActivity />
+        <ModalCreateTask setTasks={setTasks} />
         <ScrollView style={S.list}>
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
-          <ActivityItem />
+          {tasks.map((task, key) => (
+            <TaskItem key={key} task={task} setTasks={setTasks} />
+          ))}
         </ScrollView>
         <Text style={S.copyright}>Desenvolvido por Matheus Trindade</Text>
       </View>
