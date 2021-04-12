@@ -14,6 +14,8 @@
 <img src="screenshots/2.jpeg" width="200" /> <img src="screenshots/1.jpeg" width="220" /> <img src="screenshots/3.jpeg" width="200" />
 </p>
 
+> Baseado em [Ng ToDo List](https://github.com/Thauan/ng-todo-list)
+
 <br />
 
 ## 📲 Download da aplicação
