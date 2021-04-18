@@ -18,12 +18,12 @@
 
 <br />
 
-## 📲 Download da aplicação
+## Download da aplicação
 * Em breve
 
 <br />
 
-## 🌟 Funcionalidades
+##  Funcionalidades
 - 📃 Listagem de Tasks
 - 📑 Adicionar novas Tasks
 - 📝 Editar dados das Tasks
@@ -31,9 +31,9 @@
 
 <br/>
 
-## 💻 Principais tecnologias
+## Principais tecnologias
 
-- [React Native](https://getbootstrap.com)
+- [React Native](https://reactnative.dev/)
 - [WatermelonDB](https://nozbe.github.io/WatermelonDB/index.html)
 
 <br/>
